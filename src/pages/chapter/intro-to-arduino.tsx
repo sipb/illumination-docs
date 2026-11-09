@@ -1,6 +1,5 @@
 import { google } from 'googleapis';
 import { promises as fs } from "fs";
-import { parse } from "csv-parse";
 
 import GuideImage from '../../components/GuideImage';
 import PageNavigationButtons from '../../components/PageNavigationButtons';
