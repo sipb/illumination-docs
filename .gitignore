@@ -40,3 +40,6 @@ jspm_packages
 .next
 
 .DS_Store
+
+# Static build output
+src/out
