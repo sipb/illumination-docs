@@ -1,4 +1,7 @@
 import { google } from 'googleapis';
+import { promises as fs } from "fs";
+import { parse } from "csv-parse";
+
 import GuideImage from '../../components/GuideImage';
 import PageNavigationButtons from '../../components/PageNavigationButtons';
 import Sidebar from '../../components/Sidebar';
@@ -6,29 +9,12 @@ import Sidebar from '../../components/Sidebar';
 import styles from '../../styles/Guide.module.scss';
 
 export async function getStaticProps() {
-  const spreadsheetId = '1842kbUd7-BNB2azTGkqsW8s7hj8USPVzFLL9nyT-GWA';
-  const client = new google.auth.JWT({
-    email: process.env.NEXT_PUBLIC_CLIENT_EMAIL,
-    scopes: ['https://www.googleapis.com/auth/spreadsheets'],
-    key: process.env.NEXT_PUBLIC_PRIVATE_KEY,
-  });
+  const listFile = await fs.readFile("./data/shopping-list.csv", "utf-8");
+  const data = listFile.split('\n').map(l => l.split(",").map(i => i.trim())).slice(1);
 
-  await client.authorize();
-
-  const gsapi = google.sheets({ version: 'v4', auth: client });
-
-  // fetch data from all sheets at once
-
-  const opt = {
-    spreadsheetId: spreadsheetId,
-    range: 'Data-Linked Kit Parts',
-  };
-  const results = await gsapi.spreadsheets.values.get(opt);
-
-  const data = results.data.values;
   return {
     props: {
-      data: data,
+      data,
     },
   };
 }
@@ -107,7 +93,7 @@ const Page = ({ data }: any) => {
               </tr>
               {data.map((row: any) => {
                 return (
-                  <tr>
+                  <tr key={row[0]}>
                     <td>{row[0]}</td>
                     <td>
                       <a href={row[2]} target="_blank">
